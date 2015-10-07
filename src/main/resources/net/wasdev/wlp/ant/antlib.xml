@@ -7,4 +7,13 @@
     <taskdef classname="net.wasdev.wlp.ant.InstallFeatureTask" name="install-feature" />
     <taskdef classname="net.wasdev.wlp.ant.UninstallFeatureTask" name="uninstall-feature" />
     <taskdef classname="net.wasdev.wlp.ant.install.InstallLibertyTask" name="install-liberty" />
+    <taskdef classname="net.wasdev.wlp.ant.servertasks.ServerCreate" name="serverCreate" />
+    <taskdef classname="net.wasdev.wlp.ant.servertasks.ServerDebug" name="serverDebug" />
+    <taskdef classname="net.wasdev.wlp.ant.servertasks.ServerDump" name="serverDump" />
+    <taskdef classname="net.wasdev.wlp.ant.servertasks.ServerJavaDump" name="serverJavaDump" />
+    <taskdef classname="net.wasdev.wlp.ant.servertasks.ServerPackage" name="serverPackage" />
+    <taskdef classname="net.wasdev.wlp.ant.servertasks.ServerRun" name="serverRun" />
+    <taskdef classname="net.wasdev.wlp.ant.servertasks.ServerStart" name="serverStart" />
+    <taskdef classname="net.wasdev.wlp.ant.servertasks.ServerStatus" name="serverStatus" />
+    <taskdef classname="net.wasdev.wlp.ant.servertasks.ServerStop" name="serverStop" />
 </antlib>

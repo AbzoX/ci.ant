@@ -122,7 +122,7 @@ public class ServerTask extends AbstractTask {
         }
     }
         
-    private void doStart() throws Exception {
+    protected void doStart() throws Exception {
         // create server first if it doesn't exist        
         if (!serverConfigDir.exists()) {
             log(MessageFormat.format(messages.getString("info.server.create"), serverName));
@@ -167,7 +167,7 @@ public class ServerTask extends AbstractTask {
 
     }
     
-    private void doRun() throws Exception {
+    protected void doRun() throws Exception {
         // create server first if it doesn't exist        
         if (!serverConfigDir.exists()) {
             log(MessageFormat.format(messages.getString("info.server.create"), serverName));
@@ -197,14 +197,14 @@ public class ServerTask extends AbstractTask {
         }
     }
     
-    private void doStop() throws Exception {
+    protected void doStop() throws Exception {
         List<String> command = getInitialCommand(operation);
         processBuilder.command(command);
         Process p = processBuilder.start();
         checkReturnCode(p, processBuilder.command().toString(), ReturnCode.OK.getValue(), ReturnCode.REDUNDANT_ACTION_STATUS.getValue());
     }
     
-    private void doStatus() throws Exception {
+    protected void doStatus() throws Exception {
         List<String> command = getInitialCommand(operation);
         processBuilder.command(command);
         Process p = processBuilder.start();
@@ -215,7 +215,7 @@ public class ServerTask extends AbstractTask {
         getProject().setUserProperty(resultProperty, String.valueOf(exitCode));
     }
     
-    private void doDump() throws Exception {
+    protected void doDump() throws Exception {
         List<String> command = getInitialCommand(operation);
         addArchiveOption(command);
         addIncludeOption(command);
@@ -224,7 +224,7 @@ public class ServerTask extends AbstractTask {
         checkReturnCode(p, processBuilder.command().toString(), ReturnCode.OK.getValue());
     }
     
-    private void doJavaDump() throws Exception {
+    protected void doJavaDump() throws Exception {
         List<String> command = getInitialCommand(operation);
         addIncludeOption(command);
         processBuilder.command(command);
@@ -232,7 +232,7 @@ public class ServerTask extends AbstractTask {
         checkReturnCode(p, processBuilder.command().toString(), ReturnCode.OK.getValue());
     }
     
-    private void doPackage() throws Exception {
+    protected void doPackage() throws Exception {
         List<String> command = getInitialCommand(operation);
         addArchiveOption(command);
         addIncludeOption(command);
@@ -242,7 +242,7 @@ public class ServerTask extends AbstractTask {
         checkReturnCode(p, processBuilder.command().toString(), ReturnCode.OK.getValue());
     }
         
-    private void doCreate() throws Exception {
+    protected void doCreate() throws Exception {
         List<String> command = getInitialCommand("create");
         if (template != null) {
             command.add("--template=" + template);
@@ -252,7 +252,7 @@ public class ServerTask extends AbstractTask {
         checkReturnCode(p, processBuilder.command().toString(), ReturnCode.OK.getValue());
     }
     
-    private void doDebug() throws Exception {
+    protected void doDebug() throws Exception {
         List<String> command = getInitialCommand(operation);
         addCleanOption(command);
         processBuilder.command(command);
