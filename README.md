@@ -5,6 +5,22 @@ Collection of Ant tasks for managing WebSphere Application Server Liberty Profil
 * [Build](#build)
 * [Configuration](#configuration)
 * [Tasks](#tasks)
+  * [Install Liberty](#install-liberty-task)
+  * [Server](#server-task)
+  * [Operation-specific server tasks](#operation-specific-server-tasks)
+      * [Create](#servercreate)
+      * [Debug](#serverdebug)
+      * [Dump](#serverdump)
+      * [JavaDump](#serverjavadump)
+      * [Package](#serverpackage)
+      * [Run](#serverrun)
+      * [Start](#serverstart)
+      * [Status](#serverstatus)
+      * [Stop](#serverstop)
+  * [Deploy](#deploy-task)
+  * [Undeploy](#undeploy-task)
+  * [Install feature](#install-feature-task)
+  * [Uninstall feature](#uninstall-feature-task)
 
 ## Build
 
@@ -112,12 +128,7 @@ The `server` task supports the following operations:
 | outputDir | Value of the `${wlp_output_dir}` variable. The default value is `${installDir}/usr/servers/${serverName}`. | No | 
 | ref | Reference to an existing server task definition to reuse its server configuration. Configuration such as `installDir`, `userDir`, `outputDir`, and `serverName` are reused from the referenced server task. | No | 
 | operation | Server operations available as options: `create`, `start`, `stop`, `status`, `package`, `dump`, and `javadump`. | Yes | 
-| clean | Clean all cached information on server start up. The default value is `false`. Only used with the `start` operation. | No | 
 | timeout | Waiting time before the server starts. The default value is 30 seconds. The unit is milliseconds. Only used with the `start` operation. | No | 
-| include | A comma-delimited list of values. The valid values vary depending on the operation. For the `package` operation the valid values are `all`, `usr`, and `minify`. For the `dump` operation the valid values are `heap`, `system`, and `thread`. For the `javadump` operation the valid values are `heap` and `system`. | Yes, only when the `os` option is set |
-| os| A comma-delimited list of operating systems that you want the packaged server to support. Only used with the `package` operation. The 'include' option must be set to 'minify'. | No |
-| archive | Location of the target archive file. Only used with the `package` or `dump` operations. | No |
-| template | Name of the template to use when creating a new server. Only used with the `create` operation. | No |
 | resultProperty | Name of a property in which the server status will be stored. By default the server status will be stored under `wlp.<serverName>.status` property. Only used with the `status` operation. | No |
 
 #### Examples
@@ -139,6 +150,101 @@ The `server` task supports the following operations:
 
 <wlp:server ref="idMyServer" operation="start"/>
  ```
+
+### Operation-Specific Server Tasks
+---
+For each server operation (`status`,`start`,`debug`...) there is an operation-specific task simplifying its use. All of them have the same parameters as the `server` task and can be referenced using the `ref` parameter.
+
+#### serverCreate
+##### Parameters
+| Attribute | Description | Required |
+| --------- | ------------ | ----------|
+| installDir | Location of the Liberty profile server installation. | Yes |
+| ... | ... | ... |
+| template | Name of the template to use when creating a new server. | No |
+
+#### serverDebug
+##### Parameters
+| Attribute | Description | Required |
+| --------- | ------------ | ----------|
+| installDir | Location of the Liberty profile server installation. | Yes |
+| ... | ... | ... |
+| clean | Clean all cached information on server start up. The default value is `false`. | No |
+
+#### serverDump
+##### Parameters
+| Attribute | Description | Required |
+| --------- | ------------ | ----------|
+| installDir | Location of the Liberty profile server installation. | Yes |
+| ... | ... | ... |
+| include | A comma-delimited list of values. The valid values are `heap`, `system`, and `thread`. | No |
+| archive | Location of the target archive file. | No |
+
+#### serverJavaDump
+##### Parameters
+| Attribute | Description | Required |
+| --------- | ------------ | ----------|
+| installDir | Location of the Liberty profile server installation. | Yes |
+| ... | ... | ... |
+| include | A comma-delimited list of values. The valid values are `heap` and `system`. | No |
+
+#### serverPackage
+##### Parameters
+| Attribute | Description | Required |
+| --------- | ------------ | ----------|
+| installDir | Location of the Liberty profile server installation. | Yes |
+| ... | ... | ... |
+| include | A comma-delimited list of values. The valid values are `all`, `usr`, and `minify`. | Yes, only when the `os` option is set |
+| archive | Location of the target archive file. | No |
+| os | A comma-delimited list of operating systems that you want the packaged server to support. To specify that an operating system is not to be supported, prefix it with a minus sign ("-"). The 'include' attribute __must__ be set to 'minify'. | No |
+
+#### serverRun
+###### Parameters
+| Attribute | Description | Required |
+| --------- | ------------ | ----------|
+| installDir | Location of the Liberty profile server installation. | Yes |
+| ... | ... | ... |
+| clean | Clean all cached information on server start up. The default value is `false`. | No |
+
+#### serverStart
+###### Parameters
+| Attribute | Description | Required |
+| --------- | ------------ | ----------|
+| installDir | Location of the Liberty profile server installation. | Yes |
+| ... | ... | ... |
+| clean | Clean all cached information on server start up. The default value is `false`. | No |
+| timeout | Waiting time before the server starts. The default value is 30 seconds. The unit is milliseconds. | No | 
+
+#### serverStatus
+###### Parameters
+| Attribute | Description | Required |
+| --------- | ------------ | ----------|
+| installDir | Location of the Liberty profile server installation. | Yes |
+| ... | ... | ... |
+| resultProperty | Name of a property in which the server status will be stored. By default the server status will be stored under `wlp.<serverName>.status` property. | No |
+
+#### serverStop
+###### Parameters
+| Attribute | Description | Required |
+| --------- | ------------ | ----------|
+| installDir | Location of the Liberty profile server installation. | Yes |
+| ... | ... | ... |
+
+#### Examples
+
+1. You can reference a `server` task in a operation-specific task and vice versa.
+
+```ant
+<wlp:server id="idMyServer" operation="status" installDir="${wlp_install_dir}" serverName="${serverName}"/>
+<wlp:serverStart ref="idMyServer"/>
+```
+
+2. If you want to specify an OS to support in the `serverPackage` task, you must set the `include` attribute to 'minify'.
+
+```ant
+<wlp:serverStatus id="idMyServer" operation="status" installDir="${wlp_install_dir}" serverName="${serverName}"/>
+<wlp:serverPackage ref="idMyServer" include="minify" os="OS/400,-z/OS"/>
+```
 
 ### deploy task
 ---
