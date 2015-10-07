@@ -107,6 +107,7 @@
                                             <property name="wlp.version" value="${wlpVersion}" />
                                         </ant>
                                         <ant dir="${basedir}" antfile="${basedir}\build.xml" target="deploy" />
+                                        <ant dir="${basedir}" antfile="${basedir}\build.xml" target="serverTasks" />
                                     </target>
                                 </configuration>
                             </execution>
