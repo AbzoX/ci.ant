@@ -59,6 +59,16 @@ public class ServerTask extends AbstractTask {
     // used with 'package' operation
     private String os;
     
+    // used to storage the additional arguments
+    private List<Argument> arguments = new ArrayList<Argument>();
+
+    // used to know if the user is adding parameters
+    private boolean flagParameter = false;
+    
+    public void addArgument(Argument argument) {
+        arguments.add(argument);
+    }
+    
     @Override
     protected void initTask() {
         super.initTask();
@@ -90,7 +100,7 @@ public class ServerTask extends AbstractTask {
             }
         }
 
-        if (operation != null) {
+        if (operation != null && arguments.isEmpty()) {
             try {
               if ("create".equals(operation)) {
                   doCreate();
@@ -119,6 +129,25 @@ public class ServerTask extends AbstractTask {
           } catch (Exception e) {
               throw new BuildException(e);
           }
+        } else if (arguments.size() > 0 && !flagParameter) {
+            List<String> command = getInitialCommand(operation);
+            try {
+                for (Argument argument : arguments) {
+                    command.add(argument.getArgument());
+                }
+                processBuilder.command(command);
+                Process p = processBuilder.start();
+                checkReturnCode(p, processBuilder.command().toString(), ReturnCode.OK.getValue(),
+                        ReturnCode.REDUNDANT_ACTION_STATUS.getValue());
+            } catch (BuildException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new BuildException(e);
+            }
+        } else if (arguments.size() > 0 && flagParameter) {
+            throw new BuildException(MessageFormat.format(messages.getString("error.argument.parameter"), "operation"));
+        } else {
+            throw new BuildException(MessageFormat.format(messages.getString("error.operation.empty"), "operation"));
         }
     }
         
@@ -324,6 +353,7 @@ public class ServerTask extends AbstractTask {
      *            the archive to set
      */
     public void setArchive(File archive) {
+        flagParameter = true;
         this.archive = archive;
     }
 
@@ -339,6 +369,7 @@ public class ServerTask extends AbstractTask {
      *            the clean to set
      */
     public void setClean(boolean clean) {
+        flagParameter = true;
         this.clean = clean;
     }
 
@@ -367,6 +398,7 @@ public class ServerTask extends AbstractTask {
      * @param os the os to set
      */
     public void setOs(String os) {
+        flagParameter = true;
         this.os = os;
     }
     
@@ -383,6 +415,7 @@ public class ServerTask extends AbstractTask {
     }
     
     public void setInclude(String include) {
+        flagParameter = true;
         this.include = include;
     }
     
@@ -391,6 +424,7 @@ public class ServerTask extends AbstractTask {
     }
     
     public void setTemplate(String template) {
+        flagParameter = true;
         this.template = template;
     }
 
@@ -417,6 +451,20 @@ public class ServerTask extends AbstractTask {
 
         public int getValue() {
             return val;
+        }
+    }
+    
+    /* Class for the nested 'argument' element */
+    public static class Argument {
+        
+        private String argument;
+        
+        public void addText(String txt) {
+            argument = txt;
+        }
+        
+        public String getArgument() {
+            return argument;
         }
     }
 

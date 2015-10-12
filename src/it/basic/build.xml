@@ -68,6 +68,10 @@
 		<wlp:serverStatus id="testServer" installDir="${wlp.install.dir}" serverName="${servername}" userDir="${wlp.usr.dir}" outputDir="${wlp.output.dir}" />
 		<wlp:serverStop ref="testServer" />
 		<wlp:serverPackage ref="testServer" archive="${target.dir}/wlp.ant.serverPackage.test.os.zip" include="minify" os="Windows8,Windows7" />
+		<wlp:server ref="testServer" operation="package">
+			<argument>--include=all</argument>
+			<argument>--archive=wlp.ant.server.argument.test.zip</argument>
+		</wlp:server>
 		<wlp:serverStart ref="testServer" clean="true" /> 
 	</target>
 

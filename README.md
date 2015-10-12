@@ -131,6 +131,12 @@ The `server` task supports the following operations:
 | timeout | Waiting time before the server starts. The default value is 30 seconds. The unit is milliseconds. Only used with the `start` operation. | No | 
 | resultProperty | Name of a property in which the server status will be stored. By default the server status will be stored under `wlp.<serverName>.status` property. Only used with the `status` operation. | No |
 
+#### Nested Elements
+
+| Element | Description | Required |
+| --------- | ------------ | ----------|
+| argument | Additional option for the specified operation, such as --include=all. The argument must be added as a nested text. | No |
+
 #### Examples
 
 1. The `operation` attribute can be set on the `server` task.
@@ -149,6 +155,19 @@ The `server` task supports the following operations:
             operation="status"/>
 
 <wlp:server ref="idMyServer" operation="start"/>
+ ```
+
+3. You can add operation-specific options using the nested `argument` element.
+
+ ```ant
+<wlp:server id="idMyServer" installDir="${wlp_install_dir}" 
+            userDir="${wlp_usr}" outputDir="${wlp_output}" serverName="${serverName}" 
+            operation="status"/>
+
+<wlp:server ref="idMyServer" operation="package">
+            <argument>--archive="archivefile.zip"</argument>
+            <argument>--include=all</argument>
+</wlp:server>
  ```
 
 ### Operation-Specific Server Tasks
@@ -233,19 +252,19 @@ For each server operation (`status`,`start`,`debug`...) there is an operation-sp
 #### Examples
 
 1. You can reference a `server` task in a operation-specific task and vice versa.
-
-```ant
-<wlp:server id="idMyServer" operation="status" installDir="${wlp_install_dir}" serverName="${serverName}"/>
-<wlp:serverStart ref="idMyServer"/>
-```
-
+ 
+ ```ant
+ <wlp:server id="idMyServer" operation="status" installDir="${wlp_install_dir}" serverName="${serverName}"/>
+ <wlp:serverStart ref="idMyServer"/>
+ ```
+ 
 2. If you want to specify an OS to support in the `serverPackage` task, you must set the `include` attribute to 'minify'.
-
-```ant
-<wlp:serverStatus id="idMyServer" operation="status" installDir="${wlp_install_dir}" serverName="${serverName}"/>
-<wlp:serverPackage ref="idMyServer" include="minify" os="OS/400,-z/OS"/>
-```
-
+ 
+ ```ant
+ <wlp:serverStatus id="idMyServer" operation="status" installDir="${wlp_install_dir}" serverName="${serverName}"/>
+ <wlp:serverPackage ref="idMyServer" include="minify" os="OS/400,-z/OS"/>
+ ```
+ 
 ### deploy task
 ---
 
