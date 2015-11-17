@@ -30,9 +30,15 @@ import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public abstract class AbstractTask extends Task {
 
@@ -446,5 +452,36 @@ public abstract class AbstractTask extends Task {
         st.setTimeout(timeout);
         st.setOperation("stop");
         st.execute();
+    }
+    
+    /**
+     * Checks the server.xml file to know if the dropins monitoring is enabled.
+     * @returns True if monitoring is enabled, false otherwise.
+     * @throws Exception
+     */
+    protected boolean isMonitoringEnabled() throws Exception {
+        boolean dropinsEnabled = true;
+
+        String pathServerXml = serverConfigDir + "/server.xml";
+        File serverXml = new File(pathServerXml);
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document docXml = builder.parse(serverXml);
+        NodeList applicationMonitor = docXml.getElementsByTagName("applicationMonitor");
+
+        for (int i = 0; i < applicationMonitor.getLength(); i++) {
+            Element monitor = (Element) applicationMonitor.item(i);
+            String s = monitor.getAttribute("dropinsEnabled");
+            if (s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false")) {
+                dropinsEnabled = Boolean.parseBoolean(s);
+            }
+        }
+        
+        if (!dropinsEnabled) {
+            log(messages.getString("info.dropins.monitoring.disabled"));
+        }
+
+        return dropinsEnabled;
     }
 }

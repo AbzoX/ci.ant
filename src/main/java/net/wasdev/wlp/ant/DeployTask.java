@@ -54,6 +54,14 @@ public class DeployTask extends AbstractTask {
         if (timeout != null && !timeout.equals("")) {
             appStartTimeout = Long.valueOf(timeout);
         }
+        
+        boolean dropinsEnabled = true;
+        
+        try {
+            dropinsEnabled = isMonitoringEnabled();
+        } catch (Exception e) {
+            throw new BuildException(e);
+        }
 
         File dropInFolder = new File(serverConfigDir, "dropins");
         for (File file : files) {
@@ -66,7 +74,7 @@ public class DeployTask extends AbstractTask {
             }
             // Check start message code
             String startMessage = START_APP_MESSAGE_CODE_REG + getFileName(file.getName());
-            if (waitForStringInLog(startMessage, appStartTimeout, getLogFile()) == null) {
+            if (dropinsEnabled && waitForStringInLog(startMessage, appStartTimeout, getLogFile()) == null) {
                 throw new BuildException(MessageFormat.format(messages.getString("error.deploy.fail"), file.getPath()));
             }
         }
