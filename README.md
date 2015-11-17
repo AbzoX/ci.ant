@@ -158,6 +158,8 @@ The `deploy` task supports deployment of one or more applications to the Liberty
 | fileset | Location of multiple applications to be deployed. See [fileset attribute in Apache Ant](http://ant.apache.org/manual/Types/fileset.html). | Yes, only when the `file` attribute is not specified.|
 | timeout| Waiting time before the deployment completes successfully. The default value is 30 seconds. The unit is milliseconds. | No | 
 
+If the dropins monitoring is disabled, this task will only copy the apps to the dropins folder without checking their deployment.
+
 #### Examples
 
 1. Using `fileset`.
